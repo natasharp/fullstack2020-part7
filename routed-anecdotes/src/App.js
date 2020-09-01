@@ -116,7 +116,6 @@ const CreateNew = (props) => {
     info.onChange(event)
   }
 
-  
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -159,12 +158,16 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  const [timeoutId, setTimeoutId] = useState(null)
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
     setNotification(`a new anecdote ${anecdote.content} created!`)
-    setTimeout(() => setNotification(''), 10000)
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId)
+    }
+    setTimeoutId(setTimeout(() => setNotification(null), 10000))
   }
 
   const match = useRouteMatch('/anecdotes/:id')
