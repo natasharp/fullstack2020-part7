@@ -33,10 +33,16 @@ const update = (id, updatedObject) => {
   return request.then(response => response.data)
 }
 
+const createComment = (id, updatedObject) => {
+  const request = axios.post(`${baseUrl}/${id}/comments`, updatedObject)
+  return request.then(response => response.data)
+}
+
 export default {
   setToken,
   getAll,
   create,
   update,
-  remove
+  remove,
+  createComment
 }

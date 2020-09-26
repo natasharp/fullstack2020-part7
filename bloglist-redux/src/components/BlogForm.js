@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import { Button, Form } from 'react-bootstrap'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -11,7 +11,7 @@ const BlogForm = ({ createBlog }) => {
     const blogEntry = {
       title: title,
       url: url,
-      author: author
+      author: author,
     }
     createBlog(blogEntry)
     setTitle('')
@@ -21,43 +21,25 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div>
-      <h2>create new</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          title <input
-            id="title"
-            type="text"
-            value={title}
-            name="Title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author <input
-            id="author"
-            type="text"
-            value={author}
-            name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url <input
-            id="url"
-            type="url"
-            value={url}
-            name="Url"
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button id="create-button" type="submit">create</button>
-      </form>
+      <Form onSubmit={addBlog}>
+        <Form.Group controlId='title'>
+          <Form.Label>Title</Form.Label>
+          <Form.Control onChange={({ target }) => setTitle(target.value)} type='text' placeholder='Enter title:' />
+        </Form.Group>
+        <Form.Group controlId='author'>
+          <Form.Label>Author</Form.Label>
+          <Form.Control onChange={({ target }) => setAuthor(target.value)} type='text' placeholder='Enter author:' />
+        </Form.Group>
+        <Form.Group controlId=''>
+          <Form.Label>Url</Form.Label>
+          <Form.Control onChange={({ target }) => setUrl(target.value)} type='url' placeholder='Enter url:' />
+        </Form.Group>
+        <Button type='submit'>
+          create
+        </Button>
+      </Form>
     </div>
   )
-}
-
-BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired
 }
 
 export default BlogForm

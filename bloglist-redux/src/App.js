@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import blogService from './services/blogs'
-import userService from './services/users'
-import loginService from './services/login'
-import Notification from './components/Notification'
+import React, { useEffect } from 'react'
+import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { addNewNotification } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/blogReducer'
 import { setLoggedInUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
+import blogService from './services/blogs'
+import userService from './services/users'
 import Users from './components/Users'
+import User from './components/User'
 import Blogs from './components/Blogs'
-import AddNewBlog from './components/AddNewBlog'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import BlogDetails from './components/BlogDetails'
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
+import { Button, Container, Navbar } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
   const notification = useSelector((state) => state.notification)
   const user = useSelector((state) => state.user)
   const users = useSelector((state) => state.users)
-
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const blogs = useSelector((state) => state.blogs)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => dispatch(initializeBlogs(blogs)))
-    userService.getAll().then((users) => dispatch(initializeUsers(users)))
   }, [dispatch])
+
+  useEffect(() => {
+    userService.getAll().then((users) => dispatch(initializeUsers(users)))
+  }, [dispatch, blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistAppUser')
@@ -36,98 +38,58 @@ const App = () => {
     }
   }, [dispatch])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-      window.localStorage.setItem('loggedBloglistAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      dispatch(setLoggedInUser(user))
-      setUsername('')
-      setPassword('')
-    } catch (error) {
-      dispatch(addNewNotification('wrong credentials', true))
-      setTimeout(() => {
-        dispatch(addNewNotification(null, false))
-      }, 5000)
-    }
-  }
-
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistAppUser')
     dispatch(setLoggedInUser(null))
   }
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Notification
-          message={notification.notification}
-          isError={notification.isError}
-        />
-        <form onSubmit={handleLogin}>
-          <div>
-            username{' '}
-            <input
-              id='username-input'
-              type='text'
-              value={username}
-              name='Username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password{' '}
-            <input
-              id='password-input'
-              type='password'
-              value={password}
-              name='Password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button id='login-button' type='submit'>
-            login
-          </button>
-        </form>
-      </div>
-    )
+  const match = useRouteMatch('/blogs/:id')
+  const blog = match ? blogs.find((b) => b.id === match.params.id) : null
+
+  const padding = { padding: 5 }
+
+  if (!user) {
+    return <LoginForm notification={notification} />
   }
 
   return (
-    <div>
-      <Router>
-        <h2>blogs</h2>
-        <Notification
-          message={notification.notification}
-          isError={notification.isError}
-        />
-        <div>
-          <div>{user.name} is logged in</div>
-          <br />
-          <button id='logout-button' onClick={handleLogout}>
-            logout
-          </button>
-        </div>
-        <br />
-
-        <Switch>
-          <Route path='/users/:id'>
-          </Route>
-          <Route path='/users'>
-            <Users users={users} />
-          </Route>
-          <Route path='/'>
-            <AddNewBlog />
-            <Blogs user={user} />
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+    <Container>
+      <Navbar bg='light' variant='light'>
+        <Navbar.Brand>BLOG APP</Navbar.Brand>
+        <Link style={padding} to='/blogs'>
+          Blogs
+        </Link>
+        <Link style={padding} to='/users'>
+          Users
+        </Link>
+        <Navbar.Collapse className='justify-content-end'>
+          <Navbar.Text>Signed in as: {user.name}</Navbar.Text>
+          <Link style={padding} to='/login'>
+            <Button variant='light' onClick={handleLogout}>
+              logout
+            </Button>
+          </Link>
+        </Navbar.Collapse>
+      </Navbar>
+      <Notification
+        message={notification.notification}
+        isError={notification.isError}
+      />
+      <Switch>
+        <Route path='/blogs/:id'>
+          <BlogDetails user={user} blog={blog} />
+        </Route>
+        <Route path='/users/:id'>
+          <User users={users} />
+        </Route>
+        <Route path='/users/'>
+          <Users users={users} />
+        </Route>
+        <Route path='/'>
+          <Blogs user={user} blogs={blogs} />
+        </Route>
+      </Switch>
+    </Container>
   )
 }
 

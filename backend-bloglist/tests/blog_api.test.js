@@ -47,6 +47,7 @@ describe('addition of a new blog', () => {
             author: 'Brane Games',
             url: 'https://branegames.com/blog/converting-shadertoy-shaders-to-godot/',
             likes: 10,
+            comments: [],
             user: '5a422a851b54a676234d1755'
         }
 
@@ -72,6 +73,7 @@ describe('addition of a new blog', () => {
             title: 'Be water my friend',
             author: 'Brane Games',
             url: 'https://branegames.com/blog/converting-shadertoy-shaders-to-godot/',
+            comments: [],
             user: '5a422a851b54a676234d1755'
         }
 
@@ -92,6 +94,7 @@ describe('addition of a new blog', () => {
             author: '',
             url: 'https://branegames.com/blog/converting-shadertoy-shaders-to-godot/',
             likes: 42,
+            comments: [],
             user: '5a422a851b54a676234d1755'
         })
 
@@ -114,6 +117,7 @@ describe('addition of a new blog', () => {
             author: 'Brane Games',
             url: 'https://branegames.com/blog/converting-shadertoy-shaders-to-godot/',
             likes: 10,
+            comments: [],
             user: '5a422a851b54a676234d1755'
         }
 
@@ -154,6 +158,7 @@ describe('update of the blog', () => {
         author: 'Brane Games',
         url: 'https://branegames.com/blog/converting-shadertoy-shaders-to-godot/',
         likes: 122,
+        comments: [],
         user: '5a422a851b54a676234d1755'
     }
 

@@ -8,13 +8,21 @@ import userReducer from './reducers/userReducer'
 import blogReducer from './reducers/blogReducer'
 import usersReducer from './reducers/usersReducer'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import { BrowserRouter as Router } from 'react-router-dom'
 
-const reducer = combineReducers({  blogs: blogReducer,  user: userReducer, users: usersReducer, notification: notificationReducer})
+const reducer = combineReducers({
+  blogs: blogReducer,
+  user: userReducer,
+  users: usersReducer,
+  notification: notificationReducer,
+})
 const store = createStore(reducer, composeWithDevTools())
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router>
+        <App />
+    </Router>
   </Provider>,
   document.getElementById('root')
 )

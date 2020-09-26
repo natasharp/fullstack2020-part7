@@ -1,16 +1,15 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import Togglable from './Togglable'
 import blogService from '../services/blogs'
 import { addNewBlog } from '../reducers/blogReducer'
 import { addNewNotification } from '../reducers/notificationReducer'
-import BlogForm from '../components/BlogForm'
+import BlogForm from './BlogForm'
+import { Accordion, Card } from 'react-bootstrap'
 
-const AddNewBlog = () => {
+const NewBlogForm = () => {
   const dispatch = useDispatch()
 
   const createBlog = (newBlog) => {
-    blogFormRef.current.toggleVisibility()
     blogService
       .create(newBlog)
       .then((returnedBlog) => {
@@ -30,14 +29,20 @@ const AddNewBlog = () => {
       })
   }
 
-  const blogFormRef = React.createRef()
-  const blogForm = () => (
-    <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-      <BlogForm createBlog={createBlog} />
-    </Togglable>
+  return (
+    <Accordion>
+      <Card>
+        <Accordion.Toggle as={Card.Header} eventKey='0'>
+        Create new blog entry
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey='0'>
+          <Card.Body>
+            <BlogForm createBlog={createBlog} />
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
+    </Accordion>
   )
-
-  return <div> {blogForm()}</div>
 }
 
-export default AddNewBlog
+export default NewBlogForm
